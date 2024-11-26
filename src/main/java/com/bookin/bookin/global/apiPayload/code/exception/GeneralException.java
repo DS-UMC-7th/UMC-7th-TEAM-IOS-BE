@@ -1,9 +1,9 @@
-package umc.spring.apiPayload.code.exception;
+package com.bookin.bookin.global.apiPayload.code.exception;
 
+import com.bookin.bookin.global.apiPayload.code.BaseErrorCode;
+import com.bookin.bookin.global.apiPayload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.spring.apiPayload.code.BaseErrorCode;
-import umc.spring.apiPayload.code.ErrorReasonDTO;
 
 @Getter
 @AllArgsConstructor

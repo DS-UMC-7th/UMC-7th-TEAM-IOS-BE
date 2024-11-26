@@ -1,5 +1,8 @@
-package umc.spring.apiPayload.code.exception;
+package com.bookin.bookin.global.apiPayload.code.exception;
 
+import com.bookin.bookin.global.apiPayload.ApiResponse;
+import com.bookin.bookin.global.apiPayload.code.ErrorReasonDTO;
+import com.bookin.bookin.global.apiPayload.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import umc.spring.apiPayload.ApiResponse;
-import umc.spring.apiPayload.code.ErrorReasonDTO;
-import umc.spring.apiPayload.code.status.ErrorStatus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package umc.spring.apiPayload.code;
+package com.bookin.bookin.global.apiPayload.code;
 
 import lombok.Builder;
 import lombok.Getter;

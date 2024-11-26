@@ -1,11 +1,12 @@
-package umc.spring.apiPayload.code.exception.handler;
+package com.bookin.bookin.global.apiPayload.code.exception.handler;
 
-import umc.spring.apiPayload.code.BaseErrorCode;
-import umc.spring.apiPayload.code.exception.GeneralException;
 
-public class TempHandler extends GeneralException {
+import com.bookin.bookin.global.apiPayload.code.BaseErrorCode;
+import com.bookin.bookin.global.apiPayload.code.exception.GeneralException;
 
-    public TempHandler(BaseErrorCode errorCode) {
+public class CustomHandler extends GeneralException {
+
+    public CustomHandler(BaseErrorCode errorCode) {
         super(errorCode);
     }
 }

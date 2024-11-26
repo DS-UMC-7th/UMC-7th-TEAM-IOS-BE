@@ -1,19 +1,17 @@
-package umc.spring.apiPayload.code.status;
+package com.bookin.bookin.global.apiPayload.code.status;
 
+import com.bookin.bookin.global.apiPayload.code.BaseCode;
+import com.bookin.bookin.global.apiPayload.code.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import umc.spring.apiPayload.code.BaseCode;
-import umc.spring.apiPayload.code.ReasonDTO;
 
 @Getter
 @AllArgsConstructor
 public enum SuccessStatus implements BaseCode {
 
     // 일반적인 응답
-    _OK(HttpStatus.OK, "COMMON200", "성공입니다."),
-
-    CREATED_REVIEW(HttpStatus.CREATED,"REVIEW201","리뷰가 성공적으로 작성되었습니다.");
+    _OK(HttpStatus.OK, "COMMON200", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
