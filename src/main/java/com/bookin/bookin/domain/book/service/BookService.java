@@ -23,9 +23,11 @@ public class BookService {
         long totalElement;
         List<BookDTO> books;
 
-        if(sortedBy.equals("latest")) {
+        if(sortedBy.equals("highest")) {
 
-        } else if(sortedBy.equals("earliest")){
+        } else if(sortedBy.equals("latest")){
+
+        } else {
 
         }
         return null;

@@ -12,7 +12,7 @@ public interface BookControllerDocs {
             @RequestParam(value = "sortedBy", required = false) @Parameter(description = "정렬순",
                     examples =
                             {@ExampleObject(name = "리뷰 최신순", summary = "최신순 정렬", value = "latest"),
-                                    @ExampleObject(name = "별점 높은순", summary = "오래된순 정렬", value = "earliest")}) String sortedBy,
+                                    @ExampleObject(name = "별점 높은순", summary = "별점 높은순 정렬", value = "highest")}) String sortedBy,
              @RequestParam(value = "page", defaultValue = "0") int page,
              @RequestParam(value = "size", defaultValue = "3") int size
     );
