@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface BookControllerDocs {
     public ApiResponse<BookListResponse> getBooks(
-             Long userId, // Todo : 추후 토큰으로 수정
             @RequestParam(value = "sortedBy", required = false) @Parameter(description = "정렬순",
                     examples =
                             {@ExampleObject(name = "리뷰 최신순", summary = "최신순 정렬", value = "latest"),

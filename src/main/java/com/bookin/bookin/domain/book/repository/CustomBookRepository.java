@@ -10,5 +10,4 @@ public interface CustomBookRepository {
 
     // 리뷰 최신순 정렬
     Page<Book> findAllOrderByLatestReview(Pageable pageable);
-
 }
