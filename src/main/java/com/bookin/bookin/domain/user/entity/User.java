@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,6 +34,12 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private Long providerId;
+
+    @Column
+    private String profilePicture; // 프로필 사진 경로 추가
+
+    @Column(nullable = false)
+    private String email; // 이메일 필드 추가
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;
