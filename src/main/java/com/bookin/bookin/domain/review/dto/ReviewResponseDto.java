@@ -17,4 +17,5 @@ public class ReviewResponseDto {
     private Long bookId;
     private LocalDateTime createdAt;
     private List<String> tags;
+    private List<String> imageUrls;
 }
