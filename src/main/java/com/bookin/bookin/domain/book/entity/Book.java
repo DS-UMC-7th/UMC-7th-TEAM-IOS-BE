@@ -26,7 +26,7 @@ public class Book extends BaseEntity {
     private String author;
 
     @Column(nullable = false)
-    private Integer isbn;
+    private String isbn;
 
     @Column(nullable = false)
     private String publisher;
@@ -42,6 +42,9 @@ public class Book extends BaseEntity {
 
     @Column
     private Integer price;
+
+    @Column
+    private Float rating;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<Review> reviews;
