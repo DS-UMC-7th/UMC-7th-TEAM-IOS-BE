@@ -8,5 +8,9 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByBookId(Long bookid);
+    // bookId에 대한 리뷰 list 가져오기
+    List<Review> findByBookId(Long bookId);
+
+    // bookId에 대한 총 리뷰수
+    Long countByBookId(Long bookId);
 }
