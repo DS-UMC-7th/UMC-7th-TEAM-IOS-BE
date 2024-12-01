@@ -18,7 +18,7 @@ public class TagController {
 
     private final TagService tagService;
 
-    @Operation(summary = "전체 태그 목록 조회")
+    @Operation(summary = "전체 태그 목록 조회 API")
     @GetMapping
     public ApiResponse<List<TagDTO>> getAllTags() {
         List<TagDTO> tags = tagService.getAllTags();

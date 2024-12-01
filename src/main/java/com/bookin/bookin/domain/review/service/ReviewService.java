@@ -2,6 +2,7 @@ package com.bookin.bookin.domain.review.service;
 
 import com.bookin.bookin.domain.book.entity.Book;
 import com.bookin.bookin.domain.book.repository.BookRepository;
+import com.bookin.bookin.domain.book.service.BookService;
 import com.bookin.bookin.domain.review.entity.Review;
 import com.bookin.bookin.domain.review.entity.ReviewImage;
 import com.bookin.bookin.domain.review.entity.ReviewTag;
@@ -18,8 +19,6 @@ import org.springframework.stereotype.Service;
 import com.bookin.bookin.domain.review.dto.ReviewRequestDTO;
 import com.bookin.bookin.domain.review.dto.ReviewResponseDTO;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -30,6 +29,7 @@ public class ReviewService {
     private final TagRepository tagRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final BookService bookService;
 
     @Transactional
     public ReviewResponseDTO createReview(ReviewRequestDTO request) {
@@ -40,8 +40,9 @@ public class ReviewService {
         // 해당 리뷰의 사용자, 책
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Book book = bookRepository.findById(request.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        Book book = bookRepository.findByIsbn(request.getBook().getIsbn())
+                .orElseGet(() -> bookService.saveBook(request.getBook()));
 
         // 리뷰 엔티티 생성
         Review review = Review.builder()
@@ -52,6 +53,9 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
+
+        // 별점 평균 계산
+        updateBookRating(book, review.getRating());
 
         // 태그 추가
         if (request.getTagIds() == null || request.getTagIds().isEmpty()) {
@@ -81,5 +85,14 @@ public class ReviewService {
         }
 
         return new ReviewResponseDTO(review);
+    }
+
+    @Transactional
+    public void updateBookRating(Book book, Float rating) {
+        Float averageRating = (book.getRating() == null)
+                ? rating
+                : reviewRepository.calculateAverageRatingByBookId(book.getId());
+
+        bookService.updateBookRating(book, averageRating);
     }
 }

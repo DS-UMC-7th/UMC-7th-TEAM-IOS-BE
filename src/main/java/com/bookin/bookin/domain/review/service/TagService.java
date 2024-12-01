@@ -1,7 +1,6 @@
 package com.bookin.bookin.domain.review.service;
 
 import com.bookin.bookin.domain.review.dto.TagDTO;
-import com.bookin.bookin.domain.review.entity.Tag;
 import com.bookin.bookin.domain.review.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

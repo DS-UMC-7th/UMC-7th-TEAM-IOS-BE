@@ -1,5 +1,6 @@
 package com.bookin.bookin.domain.book.service;
 
+import com.bookin.bookin.domain.book.dto.request.BookRequestDTO;
 import com.bookin.bookin.domain.book.dto.response.BookDTO;
 import com.bookin.bookin.domain.book.dto.response.BookListResponse;
 import com.bookin.bookin.domain.book.entity.Book;
@@ -44,5 +45,26 @@ public class BookService {
                 .totalElement(totalElement)
                 .books(bookDTOs)
                 .build();
+    }
+
+    public Book saveBook(BookRequestDTO reqeust) {
+        Book book = Book.builder()
+                .title(reqeust.getTitle())
+                .author(reqeust.getAuthor())
+                .isbn(reqeust.getIsbn())
+                .publisher(reqeust.getPublisher())
+                .description(reqeust.getDescription())
+                .publishedDate(reqeust.getPublishedDate())
+                .image(reqeust.getImageUrl())
+                .price(reqeust.getPrice())
+                .rating(null)
+                .build();
+
+        return bookRepository.save(book);
+    }
+
+    public void updateBookRating(Book book, Float averageRating) {
+        book.setRating(averageRating);
+        bookRepository.save(book);
     }
 }

@@ -36,29 +36,25 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
                 .from(book)
                 .where(builder).fetchOne();
 
-        // Return a Page object with results
         return new PageImpl<>(books, pageable, total);
     }
 
     @Override
     public Page<Book> findAllOrderByLatestReview(Pageable pageable) {
 
-        // Fetch books ordered by the latest review date
         List<Book> books = jpaQueryFactory
                 .selectFrom(book)
-                .leftJoin(book.reviews, review) // Join with reviews
-                .orderBy(review.createdAt.desc().nullsLast()) // Order by latest review date
+                .leftJoin(book.reviews, review)
+                .orderBy(review.createdAt.desc().nullsLast())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // Fetch total count of books
         long total = jpaQueryFactory
                 .select(book.count())
                 .from(book)
                 .fetchOne();
 
-        // Return the paginated result
         return new PageImpl<>(books, pageable, total);
     }
 
