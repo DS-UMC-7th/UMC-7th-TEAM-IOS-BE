@@ -1,7 +1,7 @@
 package com.bookin.bookin.domain.review.controller;
 
 import com.bookin.bookin.domain.review.dto.RatingResponseDto;
-import com.bookin.bookin.domain.review.dto.ReviewResponseDto;
+import com.bookin.bookin.domain.review.dto.BookReviewResponseDto;
 import com.bookin.bookin.domain.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ public class ReviewController {
 
     // 책 별 리뷰 조회 endpoint
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewByBookId(@PathVariable Long bookId) {
-        List<ReviewResponseDto> reviews = reviewService.getReviewsByBookId(bookId);
+    public ResponseEntity<List<BookReviewResponseDto>> getReviewByBookId(@PathVariable Long bookId) {
+        List<BookReviewResponseDto> reviews = reviewService.getReviewsByBookId(bookId);
         return ResponseEntity.ok(reviews); // 200 ok, 데이터 반환
     }
 

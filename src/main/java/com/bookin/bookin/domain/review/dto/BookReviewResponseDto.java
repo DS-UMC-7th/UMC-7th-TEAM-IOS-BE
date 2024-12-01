@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class ReviewResponseDto {
+public class BookReviewResponseDto {
     private Long id;
     private String content;
     private Float rating;

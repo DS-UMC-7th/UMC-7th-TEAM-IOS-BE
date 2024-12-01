@@ -3,7 +3,7 @@ package com.bookin.bookin.domain.review.service;
 import com.bookin.bookin.domain.book.entity.Book;
 import com.bookin.bookin.domain.book.repository.BookRepository;
 import com.bookin.bookin.domain.review.dto.RatingResponseDto;
-import com.bookin.bookin.domain.review.dto.ReviewResponseDto;
+import com.bookin.bookin.domain.review.dto.BookReviewResponseDto;
 import com.bookin.bookin.domain.review.entity.Review;
 import com.bookin.bookin.domain.review.entity.ReviewImage;
 import com.bookin.bookin.domain.review.repository.ReviewRepository;
@@ -20,11 +20,11 @@ public class ReviewService {
     private final BookRepository BookRepository;
 
     // 책 별 리뷰 조회
-    public List<ReviewResponseDto> getReviewsByBookId(Long bookId) {
+    public List<BookReviewResponseDto> getReviewsByBookId(Long bookId) {
         List<Review> reviews = reviewRepository.findByBookId(bookId);
         // 엔티티를 dto로 변환
         return reviews.stream()
-                .map(review -> new ReviewResponseDto(
+                .map(review -> new BookReviewResponseDto(
                         review.getId(),
                         review.getContent(),
                         review.getRating(),
