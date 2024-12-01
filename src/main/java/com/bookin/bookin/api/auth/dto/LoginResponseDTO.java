@@ -1,4 +1,4 @@
-package com.bookin.bookin.api.auth;
+package com.bookin.bookin.api.auth.dto;
 
 public class LoginResponseDTO {
 

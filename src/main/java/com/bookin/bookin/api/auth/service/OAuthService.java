@@ -1,25 +1,22 @@
-package com.bookin.bookin.api.auth;
+package com.bookin.bookin.api.auth.service;
 
 import com.bookin.bookin.domain.user.entity.User;
 import com.bookin.bookin.domain.user.entity.enums.Provider;
 import com.bookin.bookin.domain.user.repository.UserRepository;
 import com.bookin.bookin.security.JwtTokenProvider;
+import com.bookin.bookin.api.auth.dto.LoginResponseDTO;
 import com.bookin.bookin.global.apiPayload.ApiResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@RestController
+@Service
 @RequiredArgsConstructor
-@RequestMapping("/oauth")
-public class OAuthController {
+public class OAuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -33,19 +30,29 @@ public class OAuthController {
     @Value("${kakao.client_secret}")
     private String clientSecret;
 
-    @GetMapping("/kakao")
-    public String kakaoConnect() {
+    public String getAuthorizationUrl() {
         StringBuilder url = new StringBuilder();
         url.append("https://kauth.kakao.com/oauth/authorize?");
-        url.append("client_id=" + clientId);
-        url.append("&redirect_uri=" + redirectUri);
+        url.append("client_id=").append(clientId);
+        url.append("&redirect_uri=").append(redirectUri);
         url.append("&response_type=code");
         return "redirect:" + url.toString();
     }
 
-    @GetMapping("/callback")
-    public ResponseEntity<ApiResponse<String>> kakaoCallback(@RequestParam String code) {
-        // 카카오 토큰 요청
+    public ResponseEntity<ApiResponse<LoginResponseDTO>> processKakaoCallback(String code) {
+        String accessToken = fetchAccessToken(code);
+        String userInfo = fetchUserInfo(accessToken);
+
+        User user = processUser(userInfo);
+        String token = jwtTokenProvider.createToken(user.getUserId());
+
+        LoginResponseDTO loginResponse = new LoginResponseDTO(user.getUserId(), token);
+        ApiResponse<LoginResponseDTO> response = ApiResponse.onSuccess(loginResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private String fetchAccessToken(String code) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
         String tokenParams = "grant_type=authorization_code" +
                 "&client_id=" + clientId +
@@ -61,13 +68,16 @@ public class OAuthController {
                 String.class
         );
 
-        // 액세스 토큰 추출 및 사용자 정보 가져오기
-        String accessToken = parseAccessToken(tokenResponse.getBody());
+        return parseAccessToken(tokenResponse.getBody());
+    }
+
+    private String fetchUserInfo(String accessToken) {
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> userInfoResponse = restTemplate.exchange(
                 userInfoUrl,
                 HttpMethod.GET,
@@ -75,15 +85,9 @@ public class OAuthController {
                 String.class
         );
 
-        // 사용자 정보 처리
-        User user = processUser(userInfoResponse.getBody());
-        String token = jwtTokenProvider.createToken(user.getUserId());
-
-        ApiResponse<String> response = ApiResponse.onSuccess("로그인 성공, JWT 토큰: " + token);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return userInfoResponse.getBody();
     }
 
-    // 토큰에서 액세스 토큰 추출
     private String parseAccessToken(String responseBody) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -96,12 +100,10 @@ public class OAuthController {
     }
 
     private User processUser(String userInfo) {
-        // 사용자 정보 파싱
         String userId = parseUserId(userInfo);
         String email = parseEmail(userInfo);
         String nickname = parseNickname(userInfo);
 
-        // DB에서 사용자 확인 후 신규 사용자 추가
         User user = userRepository.findByUserId(userId)
                 .orElseGet(() -> User.builder()
                         .userId(userId)
@@ -115,7 +117,6 @@ public class OAuthController {
         return userRepository.save(user);
     }
 
-    // 사용자 정보 파싱
     private String parseUserId(String userInfo) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -145,18 +146,6 @@ public class OAuthController {
             JsonNode jsonNode = mapper.readTree(userInfo);
             JsonNode properties = jsonNode.get("properties");
             return properties.get("nickname").asText();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private String parseProfilePicture(String userInfo) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(userInfo);
-            JsonNode properties = jsonNode.get("properties");
-            return properties.get("profile_image").asText();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

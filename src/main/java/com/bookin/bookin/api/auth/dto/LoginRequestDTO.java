@@ -1,4 +1,4 @@
-package com.bookin.bookin.api.auth;
+package com.bookin.bookin.api.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
