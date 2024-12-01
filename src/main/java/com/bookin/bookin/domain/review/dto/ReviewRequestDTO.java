@@ -1,5 +1,6 @@
 package com.bookin.bookin.domain.review.dto;
 
+import com.bookin.bookin.domain.book.dto.request.BookRequestDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,8 +16,6 @@ public class ReviewRequestDTO {
     @NotNull
     private Long userId;
     @NotNull
-    private Long bookId;
-    @NotNull
     private String content;
     @NotNull
     private Float rating;
@@ -24,4 +23,5 @@ public class ReviewRequestDTO {
     private List<String> imageUrls;  // 리뷰 이미지 URL 목록
     @NotNull
     private List<Long> tagIds;  // 선택한 태그 목록
+    private BookRequestDTO book;
 }
