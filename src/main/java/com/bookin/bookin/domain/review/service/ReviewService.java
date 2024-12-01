@@ -13,13 +13,12 @@ import com.bookin.bookin.domain.review.repository.ReviewTagRepository;
 import com.bookin.bookin.domain.review.repository.TagRepository;
 import com.bookin.bookin.domain.user.entity.User;
 import com.bookin.bookin.domain.user.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.bookin.bookin.domain.review.dto.ReviewRequestDTO;
 import com.bookin.bookin.domain.review.dto.ReviewResponseDTO;
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -42,7 +41,6 @@ public class ReviewService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        log.info("책의 isbn : {}", request.getBook().getIsbn());
         Book book = bookRepository.findByIsbn(request.getBook().getIsbn())
                 .orElseGet(() -> bookService.saveBook(request.getBook()));
 
@@ -56,7 +54,7 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
-        // 별점 평균 계산 및 반영
+        // 별점 평균 계산
         updateBookRating(book, review.getRating());
 
         // 태그 추가

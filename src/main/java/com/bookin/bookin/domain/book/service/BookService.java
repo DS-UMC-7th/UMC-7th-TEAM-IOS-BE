@@ -6,8 +6,6 @@ import com.bookin.bookin.domain.book.dto.response.BookListResponse;
 import com.bookin.bookin.domain.book.entity.Book;
 import com.bookin.bookin.domain.book.repository.BookRepository;
 import com.bookin.bookin.domain.book.repository.CustomBookRepository;
-import com.bookin.bookin.global.apiPayload.code.exception.GeneralException;
-import com.bookin.bookin.global.apiPayload.code.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

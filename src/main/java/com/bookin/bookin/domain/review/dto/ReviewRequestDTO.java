@@ -23,5 +23,6 @@ public class ReviewRequestDTO {
     private List<String> imageUrls;  // 리뷰 이미지 URL 목록
     @NotNull
     private List<Long> tagIds;  // 선택한 태그 목록
-    private BookRequestDTO book;
+    @NotNull(message = "책 정보를 추가해주세요.")
+    private BookRequestDTO book; // 책 정보
 }

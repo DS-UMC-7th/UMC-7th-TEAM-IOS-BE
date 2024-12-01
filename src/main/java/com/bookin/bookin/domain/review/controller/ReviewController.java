@@ -19,10 +19,9 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @Operation(summary = "리뷰 작성")
+    @Operation(summary = "리뷰 작성 API", description = "리뷰를 저장하는 API입니다. 책이 존재하지 않을 경우, 책 정보도 함께 저장됩니다.")
     @PostMapping
     public ApiResponse<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO request) {
-        ReviewResponseDTO response = reviewService.createReview(request);
-        return ApiResponse.onSuccess(response);
+        return ApiResponse.onSuccess(reviewService.createReview(request));
     }
 }

@@ -1,6 +1,5 @@
 package com.bookin.bookin.domain.review.entity;
 
-import com.bookin.bookin.domain.book.entity.Book;
 import jakarta.persistence.*;
 import lombok.*;
 
