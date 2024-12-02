@@ -19,4 +19,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // bookId에 대한 총 리뷰수
     Long countByBookId(Long bookId);
+
+    List<Review> findTop3ByUserIdOrderByRatingDesc(Long userId);
+
+    List<Review> findByUserIdOrderByRatingDesc(Long userId);
+
+    List<Review> findByUserIdOrderByRatingAsc(Long userId);
+
+    List<Review> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    List<Review> findByUserIdOrderByCreatedAtAsc(Long userId);
+
+    List<Review> findByUserId(Long userId);
 }

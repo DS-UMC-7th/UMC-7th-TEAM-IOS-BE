@@ -6,11 +6,9 @@ import com.bookin.bookin.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.bookin.bookin.domain.review.service.ReviewService;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +21,15 @@ public class ReviewController {
     @PostMapping
     public ApiResponse<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO request) {
         return ApiResponse.onSuccess(reviewService.createReview(request));
+    }
+
+    @GetMapping("/my")
+    public List<ReviewResponseDTO> getMyReviews(@RequestParam Long userId, @RequestParam String sort) {
+        return reviewService.getMyReviews(userId, sort);
+    }
+
+    @GetMapping("/{id}")
+    public ReviewResponseDTO getReviewById(@PathVariable Long id) {
+        return reviewService.getReviewById(id);
     }
 }
