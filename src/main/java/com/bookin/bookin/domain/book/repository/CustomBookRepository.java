@@ -10,4 +10,7 @@ public interface CustomBookRepository {
 
     // 리뷰 최신순 정렬
     Page<Book> findAllOrderByLatestReview(Pageable pageable);
+
+    // 리뷰 많은순 정렬
+    Page<Book> findAllByOrderByReviewCountDesc(Pageable pageable);
 }

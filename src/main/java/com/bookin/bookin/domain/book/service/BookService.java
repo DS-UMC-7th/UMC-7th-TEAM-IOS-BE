@@ -27,6 +27,8 @@ public class BookService {
             books = customBookRepository.findAllOrderByRatingDesc(pageRequest);
         } else if (sortedBy.equals("latest")) {
             books = customBookRepository.findAllOrderByLatestReview(pageRequest);
+        } else if (sortedBy.equals("popular")) {
+            books = customBookRepository.findAllByOrderByReviewCountDesc(pageRequest);
         } else {
             books = bookRepository.findAll(pageRequest);
         }
