@@ -31,10 +31,12 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
+        Long total = jpaQueryFactory
                 .select(book.count())
                 .from(book)
                 .where(builder).fetchOne();
+
+        total = (total != null) ? total : 0L;
 
         return new PageImpl<>(books, pageable, total);
     }
@@ -45,17 +47,42 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
         List<Book> books = jpaQueryFactory
                 .selectFrom(book)
                 .leftJoin(book.reviews, review)
-                .orderBy(review.createdAt.desc().nullsLast())
+                .groupBy(book.id)
+                .orderBy(review.createdAt.max().desc().nullsLast(), book.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
-                .select(book.count())
+
+        Long total = jpaQueryFactory
+                .select(book.countDistinct())
                 .from(book)
                 .fetchOne();
+
+        total = (total != null) ? total : 0L;
 
         return new PageImpl<>(books, pageable, total);
     }
 
+    @Override
+    public Page<Book> findAllByOrderByReviewCountDesc(Pageable pageable) {
+
+        List<Book> books = jpaQueryFactory
+                .selectFrom(book)
+                .leftJoin(book.reviews, review)
+                .groupBy(book.id)
+                .orderBy(review.count().desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(book.count())
+                .from(book)
+                .fetchOne();
+
+        total = (total != null) ? total : 0L;
+
+        return new PageImpl<>(books, pageable, total);
+    }
 }
