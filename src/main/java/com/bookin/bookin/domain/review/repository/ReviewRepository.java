@@ -19,4 +19,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // bookId에 대한 총 리뷰수
     Long countByBookId(Long bookId);
+
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId ORDER BY r.rating DESC")
+    List<Review> findTop3ByUserIdOrderByRatingDesc(@Param("userId") Long userId);
+
+    List<Review> findAllByOrderByRatingDesc();
+
+    List<Review> findAllByOrderByRatingAsc();
+
+    List<Review> findAllByOrderByCreatedAtDesc();
+
+    List<Review> findAllByOrderByCreatedAtAsc();
+
 }
