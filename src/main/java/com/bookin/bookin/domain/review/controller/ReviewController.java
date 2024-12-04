@@ -6,11 +6,11 @@ import com.bookin.bookin.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.bookin.bookin.domain.review.service.ReviewService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,4 +24,17 @@ public class ReviewController {
     public ApiResponse<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO request) {
         return ApiResponse.onSuccess(reviewService.createReview(request));
     }
+
+    @Operation(summary = "리뷰 정렬 API", description = "리뷰를 다양한 기준으로 정렬하여 반환합니다.")
+    @GetMapping
+    public ResponseEntity<List<ReviewResponseDTO>> getSortedReviews(@RequestParam(defaultValue = "latest") String sortBy) {
+        return ResponseEntity.ok(reviewService.getSortedReviews(sortBy));
+    }
+
+    @Operation(summary = "특정 리뷰 조회 API", description = "특정 리뷰의 상세 정보를 조회합니다.")
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponseDTO> getReviewById(@PathVariable Long reviewId) {
+        return ResponseEntity.ok(reviewService.getReviewById(reviewId));
+    }
+
 }

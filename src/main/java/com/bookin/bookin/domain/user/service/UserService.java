@@ -1,28 +1,38 @@
 package com.bookin.bookin.domain.user.service;
 
+import com.bookin.bookin.domain.review.dto.ReviewResponseDTO;
+import com.bookin.bookin.domain.review.entity.ReviewImage;
+import com.bookin.bookin.domain.review.repository.ReviewRepository;
 import com.bookin.bookin.domain.user.dto.UserRequestDTO;
 import com.bookin.bookin.domain.user.dto.UserResponseDTO;
 import com.bookin.bookin.domain.user.entity.User;
 import com.bookin.bookin.domain.user.repository.UserRepository;
+import com.bookin.bookin.domain.review.entity.Review; // 이 부분은 유지
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
     public UserResponseDTO.JoinResultDto signUp(UserRequestDTO.JoinDto joinDto) {
-
         User user = User.builder()
                 .userId(joinDto.getUserId())
                 .password(joinDto.getPassword())
                 .nickname(joinDto.getNickname())
                 .provider(joinDto.getProvider())
-                .providerId(0L)  // 기본값 설정 (소셜 로그인이 아니면 0, 소셜 로그인 시 외부 provider ID 설정)
+                .providerId(0L)  // 기본값 설정
                 .email(joinDto.getEmail())
                 .build();
 
@@ -34,4 +44,86 @@ public class UserService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> getMyPage(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("profilePicture", user.getProfilePicture());
+        response.put("userId", user.getId());
+        response.put("userName", user.getNickname());
+        response.put("email", user.getEmail());
+
+        // 상위 3개 리뷰 조회
+        List<ReviewResponseDTO> topReviews = reviewRepository.findTop3ByUserIdOrderByRatingDesc(userId)
+                .stream()
+                .map(review -> ReviewResponseDTO.builder()
+                        .id(review.getId())
+                        .content(review.getContent())
+                        .rating(review.getRating())
+                        .userId(review.getUser().getId())
+                        .bookId(review.getBook().getId())
+                        .tagNames(review.getReviewTags().stream()
+                                .map(reviewTag -> reviewTag.getTag().getName())
+                                .collect(Collectors.toList()))
+                        .imageUrls(review.getReviewImages().stream()
+                                .map(ReviewImage::getUrl)
+                                .collect(Collectors.toList()))
+                        .build())
+                .collect(Collectors.toList());
+
+        response.put("topReviews", topReviews);
+
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewResponseDTO> getUserReviews(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        return user.getReviews().stream()
+                .map(ReviewResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewResponseDTO> getSortedUserReviews(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        return user.getReviews().stream()
+                .sorted(Comparator.comparing(Review::getRating).reversed())
+                .map(ReviewResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponseDTO getReviewDetail(Long userId, Long reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        // 권한 체크
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("사용자가 작성한 리뷰가 아닙니다.");
+        }
+
+        return ReviewResponseDTO.builder()
+                .id(review.getId())
+                .content(review.getContent())
+                .rating(review.getRating())
+                .userId(review.getUser().getId())
+                .bookId(review.getBook().getId())
+                .tagNames(review.getReviewTags().stream()
+                        .map(reviewTag -> reviewTag.getTag().getName())
+                        .collect(Collectors.toList()))
+                .imageUrls(review.getReviewImages().stream()
+                        .map(ReviewImage::getUrl)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }

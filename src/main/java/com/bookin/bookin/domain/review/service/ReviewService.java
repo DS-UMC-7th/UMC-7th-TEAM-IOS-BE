@@ -179,4 +179,39 @@ public class ReviewService {
                 star1Rate
         );
     }
+    @Transactional(readOnly = true)
+    public List<ReviewResponseDTO> getSortedReviews(String sortBy) {
+        List<Review> reviews;
+
+        switch (sortBy) {
+            case "highest_rating":
+                reviews = reviewRepository.findAllByOrderByRatingDesc();
+                break;
+            case "lowest_rating":
+                reviews = reviewRepository.findAllByOrderByRatingAsc();
+                break;
+            case "latest":
+                reviews = reviewRepository.findAllByOrderByCreatedAtDesc();
+                break;
+            case "oldest":
+                reviews = reviewRepository.findAllByOrderByCreatedAtAsc();
+                break;
+            default:
+                throw new IllegalArgumentException("유효하지 않은 정렬 기준입니다.");
+        }
+
+        return reviews.stream()
+                .map(ReviewResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponseDTO getReviewById(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        return new ReviewResponseDTO(review);
+    }
+
+
 }
