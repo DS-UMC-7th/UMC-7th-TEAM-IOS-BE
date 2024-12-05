@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,9 @@ public class ReviewResponseDTO {
     private Float rating;
     private Long userId;
     private Long bookId;
-    private List<String> tagNames;  // 태그 이름 리스트
-    private List<String> imageUrls;  // 이미지 URL 리스트
+    private List<String> tagNames; // 태그 이름 리스트
+    private List<String> imageUrls; // 이미지 URL 리스트
+    private LocalDateTime createdAt; // 작성 날짜 추가
 
     public ReviewResponseDTO(Review review) {
         this.id = review.getId();
@@ -29,14 +31,12 @@ public class ReviewResponseDTO {
         this.rating = review.getRating();
         this.userId = review.getUser().getId();
         this.bookId = review.getBook().getId();
-        // 태그 정보 추가
         this.tagNames = review.getReviewTags().stream()
-                .map(reviewTag -> reviewTag.getTag().getName())  // Tag 이름 가져오기
+                .map(reviewTag -> reviewTag.getTag().getName())
                 .collect(Collectors.toList());
-
-        // 이미지 URL 정보 추가
         this.imageUrls = review.getReviewImages().stream()
-                .map(ReviewImage::getUrl)  // ReviewImage의 URL 가져오기
+                .map(ReviewImage::getUrl)
                 .collect(Collectors.toList());
+        this.createdAt = review.getCreatedAt(); // 작성 날짜 매핑
     }
 }
