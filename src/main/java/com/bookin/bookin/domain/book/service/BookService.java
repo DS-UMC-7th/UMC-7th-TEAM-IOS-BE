@@ -2,10 +2,14 @@ package com.bookin.bookin.domain.book.service;
 
 import com.bookin.bookin.domain.book.dto.request.BookRequestDTO;
 import com.bookin.bookin.domain.book.dto.response.BookDTO;
+import com.bookin.bookin.domain.book.dto.response.BookDetailResponse;
 import com.bookin.bookin.domain.book.dto.response.BookListResponse;
 import com.bookin.bookin.domain.book.entity.Book;
 import com.bookin.bookin.domain.book.repository.BookRepository;
 import com.bookin.bookin.domain.book.repository.CustomBookRepository;
+import com.bookin.bookin.global.apiPayload.code.exception.GeneralException;
+import com.bookin.bookin.global.apiPayload.code.exception.handler.CustomHandler;
+import com.bookin.bookin.global.apiPayload.code.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -68,5 +72,10 @@ public class BookService {
     public void updateBookRating(Book book, Float averageRating) {
         book.setRating(averageRating);
         bookRepository.save(book);
+    }
+
+    public BookDetailResponse getBookDetail(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new CustomHandler(ErrorStatus.BOOK_NOT_FOUND));
+        return BookDetailResponse.of(book);
     }
 }

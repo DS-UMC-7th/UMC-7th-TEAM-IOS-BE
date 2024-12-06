@@ -1,10 +1,12 @@
 package com.bookin.bookin.domain.user.controller;
 
+import com.bookin.bookin.domain.review.dto.MyReviewResponseDTO;
 import com.bookin.bookin.domain.review.dto.ReviewResponseDTO;
 import com.bookin.bookin.domain.user.dto.UserRequestDTO;
 import com.bookin.bookin.domain.user.dto.UserResponseDTO;
 import com.bookin.bookin.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,14 +37,14 @@ public class UserController {
     // 변경된 엔드포인트: /auth/reviews
     @Operation(summary = "사용자가 작성한 모든 리뷰 조회 API", description = "사용자가 작성한 모든 리뷰를 조회합니다.")
     @GetMapping("/reviews")
-    public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(@RequestParam Long userId) {
+    public ResponseEntity<List<MyReviewResponseDTO>> getUserReviews(@RequestParam Long userId) {
         return ResponseEntity.ok(userService.getUserReviews(userId));
     }
 
     // 변경된 엔드포인트: /auth/reviews/sorted
     @Operation(summary = "사용자가 작성한 모든 리뷰 정렬 API", description = "사용자가 작성한 모든 리뷰를 정렬하여 조회합니다.")
     @GetMapping("/reviews/sorted")
-    public ResponseEntity<List<ReviewResponseDTO>> getSortedUserReviews(@RequestParam Long userId) {
+    public ResponseEntity<List<MyReviewResponseDTO>> getSortedUserReviews(@RequestParam Long userId) {
         return ResponseEntity.ok(userService.getSortedUserReviews(userId));
     }
 

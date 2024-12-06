@@ -1,11 +1,13 @@
 package com.bookin.bookin.domain.book.controller;
 
+import com.bookin.bookin.domain.book.dto.response.BookDetailResponse;
 import com.bookin.bookin.domain.book.dto.response.BookListResponse;
 import com.bookin.bookin.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "책 관리", description = "책 관리 API")
@@ -20,4 +22,7 @@ public interface BookControllerDocs {
              @RequestParam(value = "page", defaultValue = "0") int page,
              @RequestParam(value = "size", defaultValue = "3") int size
     );
+    @Operation(summary = "책 상세 조회 API", description = "bookId에 따라 책 상세 정보를 조회합니다.")
+    public ApiResponse<BookDetailResponse> getBookDetail(
+            @PathVariable(value = "bookId") @Parameter(description = "책 Id") Long bookId);
 }

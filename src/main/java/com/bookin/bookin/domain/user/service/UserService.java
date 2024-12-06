@@ -1,5 +1,8 @@
 package com.bookin.bookin.domain.user.service;
 
+import com.bookin.bookin.domain.book.dto.response.BookInfoDTO;
+import com.bookin.bookin.domain.book.entity.Book;
+import com.bookin.bookin.domain.review.dto.MyReviewResponseDTO;
 import com.bookin.bookin.domain.review.dto.ReviewResponseDTO;
 import com.bookin.bookin.domain.review.entity.Review;
 import com.bookin.bookin.domain.review.entity.ReviewImage;
@@ -62,23 +65,43 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponseDTO> getUserReviews(Long userId) {
+    public List<MyReviewResponseDTO> getUserReviews(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        return user.getReviews().stream()
-                .map(ReviewResponseDTO::new)
+        List<Review> reviews = reviewRepository.findByUser(user);
+
+        return reviews.stream()
+                .map(review -> {
+                    // 책 정보 생성
+                    Book book = review.getBook();
+                    BookInfoDTO bookInfoDTO = BookInfoDTO.of(book);
+
+                    ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO(review);
+
+                    return new MyReviewResponseDTO(bookInfoDTO, reviewResponseDTO);
+                })
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponseDTO> getSortedUserReviews(Long userId) {
+    public List<MyReviewResponseDTO> getSortedUserReviews(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        return user.getReviews().stream()
+        List<Review> reviews = reviewRepository.findByUser(user);
+
+        return reviews.stream()
                 .sorted(Comparator.comparing(Review::getRating).reversed())
-                .map(ReviewResponseDTO::new)
+                .map(review -> {
+                    // 책 정보 생성
+                    Book book = review.getBook();
+                    BookInfoDTO bookInfoDTO = BookInfoDTO.of(book);
+
+                    ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO(review);
+
+                    return new MyReviewResponseDTO(bookInfoDTO, reviewResponseDTO);
+                })
                 .collect(Collectors.toList());
     }
 
